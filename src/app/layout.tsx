@@ -1,18 +1,26 @@
-"use client";
 
+import "./globals.css";
 import { ReactNode } from "react";
-import { SessionProvider } from "next-auth/react";
-import { Session } from "next-auth";
 
-interface RootLayoutProps {
+import SessionWrapper from "@/components/SessionWrapper";
+
+export const metadata = {
+  title: "My App",
+  description: "NextAuth + Auth0",
+};
+
+export default function RootLayout({
+  children,
+}: {
   children: ReactNode;
-  session: Session | null;
-}
-
-export default function RootLayout({ children, session }: RootLayoutProps) {
+}) {
   return (
-    <SessionProvider session={session}>
-      {children}
-    </SessionProvider>
+    <html lang="en">
+      <body>
+        <SessionWrapper session={null}>
+          {children}
+        </SessionWrapper>
+      </body>
+    </html>
   );
 }
