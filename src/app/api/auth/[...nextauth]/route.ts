@@ -3,6 +3,8 @@ import Auth0Provider from "next-auth/providers/auth0";
 import { NextAuthOptions } from "next-auth";
 
 const authOptions: NextAuthOptions = {
+  debug: true,
+
   providers: [
     Auth0Provider({
       clientId: process.env.AUTH0_CLIENT_ID!,
@@ -10,6 +12,7 @@ const authOptions: NextAuthOptions = {
       issuer: process.env.AUTH0_ISSUER!,
     }),
   ],
+  secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
   },
@@ -39,7 +42,7 @@ async session({ session, token }) {
 
 },
 
-  secret: process.env.NEXTAUTH_SECRET,
+  
 };
 
 const handler = NextAuth(authOptions);
