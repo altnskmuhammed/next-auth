@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { CustomProfile } from "next-auth";
 import Auth0Provider from "next-auth/providers/auth0";
 import { NextAuthOptions } from "next-auth";
 
@@ -22,9 +22,12 @@ const authOptions: NextAuthOptions = {
 callbacks: {
   async jwt({ token, account, profile }) {
     const namespace = "https://dev-2ow5jb0r36svg5r3.eu.auth0.com";
-    if (account && profile) {
-      token.roles = (profile as any)[`${namespace}/roles`] || ["user"];
-    }
+   if (account && profile) {
+    console.log("account=",account,profile);
+    
+  const roles = (profile as CustomProfile)[`${namespace}/roles`];
+  token.roles = Array.isArray(roles) ? roles : ["user"];
+}
     return token;
   },
 async session({ session, token }) {
@@ -47,4 +50,3 @@ async session({ session, token }) {
 
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
-export { authOptions };

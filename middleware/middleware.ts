@@ -1,8 +1,8 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
-import { NextRequestWithAuth } from "next-auth/middleware";
+import type { NextRequestWithAuth } from "next-auth/middleware";
 
-// Custom token tipi tanımı
+
 interface CustomToken {
   name?: string;
   email?: string;
@@ -13,9 +13,13 @@ interface CustomToken {
 export default withAuth(
   function middleware(req: NextRequestWithAuth) {
     const token = req.nextauth.token as CustomToken;
+    const pathname = req.nextUrl.pathname;
+
+ 
+    const isAdminRoute = pathname.startsWith("/admin");
     const isAdmin = token?.roles?.includes("admin");
 
-    if (req.nextUrl.pathname.startsWith("/admin") && !isAdmin) {
+    if (isAdminRoute && !isAdmin) {
       return NextResponse.redirect(new URL("/unauthorized", req.url));
     }
 
@@ -23,10 +27,14 @@ export default withAuth(
   },
   {
     callbacks: {
-      authorized: ({ token }) => !!token,
+      authorized: ({ token }) => {
+        
+        return !!token;
+      },
     },
   }
 );
+
 
 export const config = {
   matcher: ["/dashboard/:path*", "/admin/:path*"],
